@@ -42,7 +42,7 @@ public class GetLang {
 				
 				} else if (x1r1c4a.contains("verylow")) {
 				
-					writer1.print("is based on data of very certainty.");
+					writer1.print("is based on data of very low certainty.");
 				
 				} else if (x1r1c4a.contains("low")) {
 				

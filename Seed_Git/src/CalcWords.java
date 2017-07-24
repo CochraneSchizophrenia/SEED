@@ -215,7 +215,7 @@ public class CalcWords {
 						}
 						}
 					
-					System.out.println(resSubstraction);
+					
 					/*if (tma < 1 && language =="eng" && signif == true) {
 						
 						writer1.print("Studies investigating this topic found  "+ r2String + "%  of those given " 
