@@ -70,6 +70,8 @@ public class CalcWords {
 					x1r1c3 = x1r1c3.replace(")", ":");
 					x1r1c3 = x1r1c3.replace("(", ":") ; 				// Creates ":" regex for splitting
 					String[] parts = x1r1c3.split(":");
+					
+					
 					//splits lower and higher end of CI so that these can be analysed for statistical significance. 
 					String RR = parts[1];
 					String[] CI = RR.split(" to ");
@@ -105,11 +107,13 @@ public class CalcWords {
 					if (signif == true) {
 						
 					if (xVeryLow == true && resSubstraction > 0) {
-						writer1.println(intervention + " may increase the chance of experiencing the outcome when compared with "+ control + ", but, at present there is only very limited data supporting this finding.");
+						writer1.println(intervention + " may increase the chance of experiencing the outcome when compared with "+ control + ", but, at present there are only very limited data "
+								+ "supporting this finding.");
 					} else if (xVeryLow == true && resSubstraction < 0){
-						writer1.println(intervention + " may reduce the chance of experiencing the outcome when compared with "+ control + ", but, at present there is only very limited data supporting this finding.");
+						writer1.println(intervention + " may reduce the chance of experiencing the outcome when compared with "+ control + ", but, at present there are only very limited data "
+								+ "supporting this finding.");
 					} else if (xVeryLow == true && resSubstraction == 0 ){
-						writer1.println(intervention + " makes no difference to the outcome, but, at present the quality of evidence is very low.");
+						writer1.println(intervention + " makes no difference to the outcome, but, at present there are only very limited data supporting this finding.");
 					} 
 						
 						

@@ -228,7 +228,7 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 					"DOI=" + DIO + "}}</ref>");
 		writer.println("|-");
 		//the authors' conclusions as element of the table
-		writer.println("! style=\"background: #d2e5ff; \"|Summary");
+		writer.println("! Summary");
 		writer.println("|-");
 		writer.println("| " + conclusions + "<ref name="+ authorReference + pubdate + "/>");
 		writer.println("|-");
@@ -237,19 +237,19 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 		writer.println("|-");
 				
 		//headings of columns
-		writer.println("! scope=\"col\" style=\"text-align: left; background: #d2e5ff;\" | Outcome");
-		writer.println("! scope=\"col\" style=\"text-align: left; background: #d2e5ff;\" | Findings in words");
-		writer.println("! scope=\"col\" style=\"text-align: left; background: #d2e5ff;\" | Findings in numbers");
-		writer.println("! scope=\"col\" style=\"text-align: left; background: #d2e5ff;\" | Quality of evidence");
+		writer.println("! scope=\"col\" style=\"text-align: left; | Outcome");
+		writer.println("! scope=\"col\" style=\"text-align: left; | Findings in words");
+		writer.println("! scope=\"col\" style=\"text-align: left; | Findings in numbers");
+		writer.println("! scope=\"col\" style=\"text-align: left; | Quality of evidence");
 		writer.println("|-");
 
 		//The following blocks are the content. First SEED always checks if the footnotes are reached, this is represented by the endX booleans. If a true endX boolean is encountered the table will be ended.
 		//Next the headings are inserted.    
 				if (endA == false) {
 					if (a1a == "") {
-						writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + a1);
+						writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + a1);
 					} else {
-						writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + a1a);
+						writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + a1a);
 					}
 					writer.println("|-");
 					
@@ -266,10 +266,10 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 		//Same game as above with the next rows of outcomes.		
 		if (endA == false && endB == false) {
 				if (b1a == "") {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + b1);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + b1);
 					writer.println("|-");
 				} else if (bSkip == false) {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + b1a);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + b1a);
 					writer.println("|-");
 				} 
 				writer.println("|-");
@@ -286,10 +286,10 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 
 		if (endA == false && endB == false && endC == false) {
 				if (c1a == "") {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + c1);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + c1);
 					writer.println("|-");
 				} else if (cSkip == false) {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + c1a);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + c1a);
 					writer.println("|-");
 				}
 				
@@ -307,10 +307,10 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 
 		if (endA == false && endB == false && endC == false && endD == false) {
 				if (d1a == "") {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + d1);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + d1);
 					writer.println("|-");
 				} else if (dSkip == false){
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + d1a);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + d1a);
 					writer.println("|-");
 				}
 				
@@ -327,10 +327,10 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 
 		if (endA == false && endB == false && endC == false && endD == false && endE == false) {
 				if (e1a == "") {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + e1);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + e1);
 					writer.println("|-");
 				} else if (eSkip == false) {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + e1a);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + e1a);
 					writer.println("|-");
 				}
 				
@@ -347,10 +347,10 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 
 		if (endA == false && endB == false && endC == false && endD == false && endE == false && endF == false) {
 				if (f1a == "") {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + f1);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + f1);
 					writer.println("|-");
 				} else if (fSkip == false) {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + f1a);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + f1a);
 					writer.println("|-");
 				}
 				
@@ -367,10 +367,10 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 
 		if (endA == false && endB == false && endC == false && endD == false && endE == false && endF == false && endG == false) {
 				if (g1a == "") {
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + g1);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + g1);
 					writer.println("|-");
 				} else if (gSkip == false){
-					writer.println("! colspan=\"4\" style=\"text-align: left; background: #e3efff;\" | " + g1a);
+					writer.println("! colspan=\"4\" style=\"text-align: left; \" | " + g1a);
 					writer.println("|-");
 				}
 				
