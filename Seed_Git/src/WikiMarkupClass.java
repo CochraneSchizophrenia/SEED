@@ -230,7 +230,7 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 		//the authors' conclusions as element of the table
 		writer.println("! Summary");
 		writer.println("|-");
-		writer.println("| " + conclusions + "<ref name="+ authorReference + pubdate + "/>");
+		writer.println("| PLEASE PARAPHRASE THE FOLLOWING SUMMARY, IT IS TAKEN DIRECTLY FROM YOUR REVIEW: " + conclusions + "<ref name="+ authorReference + pubdate + "/>");
 		writer.println("|-");
 		writer.println("| style=\"padding:0;\" |");
 		writer.println("{| class=\"wikitable collapsible collapsed\" style=\"width:100%;\"");
