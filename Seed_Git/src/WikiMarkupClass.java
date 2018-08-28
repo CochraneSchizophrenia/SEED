@@ -9,6 +9,8 @@ public class WikiMarkupClass {
 	//This method is called from contentClass and wraps the evidence grade contained in the String into wiki mark-up that links to an explanation of evidence grades.
 	public String wikiLinkEvidence(String x1r1cx) {
 		
+		//possibly use static counter that is incremented when this method was used for the first time. then,, in content class this counter is used to stop the method from being called
+		
 		try {
 			x1r1cx = x1r1cx
 					.replace("Very low", "[[The Grading of Recommendations Assessment, Development and Evaluation (GRADE) approach|Very low]]")
@@ -27,9 +29,11 @@ public class WikiMarkupClass {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //This method is called from contentClass and wraps the RR contained in the String into wiki mark-up that links to an explanation of RR.
 	public String wikiLinkRR(String x1r1cx) {
+	
+		//possibly use static counter that is incremented when this method was used for the first time. then,, in content class this counter is used to stop the method from being called
 		
 		try {
-			x1r1cx = x1r1cx.replace("RR", "[[Relative risk|RR]]");
+			x1r1cx = x1r1cx.replaceFirst("RR", "[[Relative risk|RR]]");
 			return x1r1cx.toString();
 		} catch (Exception e) {
 			return x1r1cx.toString();
@@ -121,7 +125,7 @@ public String wikiLinkOutcome(String outcome) {
 			x = "General Functioning"; 					if (x.equals(outcome)) {outcome = outcome.replace("General Functioning", "[[Life skills|General Functioning]]");}
 			x = "Cognitive function"; 					if (x.equals(outcome)) {outcome = outcome.replace("Cognitive function", "[[Cognition|Cognitive function]]");}
 			x = "Cognitive state"; 						if (x.equals(outcome)) {outcome = outcome.replace("Cognitive state", "[[Cognition|Cognitive state]]");}
-			
+			//use Clives analysis of outcome names to identify more first level outcome names and their synonyms
 			return outcome.toString();
 		} catch (Exception e) {
 			return outcome.toString();
