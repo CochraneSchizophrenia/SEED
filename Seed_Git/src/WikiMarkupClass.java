@@ -1,9 +1,18 @@
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.regex.Pattern;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
 
 public class WikiMarkupClass {
+	private boolean rrDescribed;
+	private boolean evidenceDescribed;
+	private boolean mdDescribed;
+	public WikiMarkupClass() {
+		rrDescribed = false;//to make sure the links are applied only once per table
+		mdDescribed = false;//to make sure the links are applied only once per table
+		evidenceDescribed = false;
+	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//This method is called from contentClass and wraps the evidence grade contained in the String into wiki mark-up that links to an explanation of evidence grades.
@@ -12,6 +21,7 @@ public class WikiMarkupClass {
 		//possibly use static counter that is incremented when this method was used for the first time. then,, in content class this counter is used to stop the method from being called
 		
 		try {
+			if (!evidenceDescribed) {
 			x1r1cx = x1r1cx
 					.replace("Very low", "[[The Grading of Recommendations Assessment, Development and Evaluation (GRADE) approach|Very low]]")
 					.replace("Moderate", "[[The Grading of Recommendations Assessment, Development and Evaluation (GRADE) approach|Moderate]]")
@@ -20,6 +30,9 @@ public class WikiMarkupClass {
 					{
 						x1r1cx = "[[The Grading of Recommendations Assessment, Development and Evaluation (GRADE) approach|Low]]";
 					}
+					evidenceDescribed = true;
+			}	
+			
 			return x1r1cx.toString();
 		} catch (Exception e) {
 			return x1r1cx.toString();
@@ -33,67 +46,29 @@ public class WikiMarkupClass {
 		//possibly use static counter that is incremented when this method was used for the first time. then,, in content class this counter is used to stop the method from being called
 		
 		try {
+			if (!rrDescribed) {
 			x1r1cx = x1r1cx.replaceFirst("RR", "[[Relative risk|RR]]");
+			rrDescribed = true;
+			}
+			
+			if (!mdDescribed) {
+				x1r1cx = x1r1cx.replaceFirst("MD", "[[Mean absolute difference|MD]]");
+				if (x1r1cx.contains("[[Mean absolute difference|MD]]"))
+					mdDescribed = true;
+				}
+			
 			return x1r1cx.toString();
 		} catch (Exception e) {
 			return x1r1cx.toString();
 		}
 	}
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//this method is called from calcWords and reformats the field with results that are MDs
-	public String mdFormat(String x1r1c2) {
-		//The mean service outcomes: time in hospital (days) in the intervention groups was16 lower(19.54 to 12.46 lower)
-		try {
-			double CIlowDb;
-			double CIhighDb;
-			double points;
-			boolean signif = false;
-			
-			x1r1c2 = x1r1c2.replace(")", ";");
-			x1r1c2 = x1r1c2.replace("(", ";") ; 				// Creates ":" regex for splitting
-			String[] parts = x1r1c2.split(";");
-			//splits lower and higher end of CI so that these can be analysed for statistical significance. 
-			String CIlow;
-			String CIhigh;
-			String description;
-			try {
-				description = parts[0];
-				String MD = parts[1];
-				String[] CI = MD.split(" to ");
-				CIlow = CI[0];
-				CIhigh = CI[1];
-				CIlowDb = Double.parseDouble(CIlow);
-				CIhighDb = Double.parseDouble(CIhigh);
-				if (CIlowDb < 0 && CIhighDb < 0 || CIlowDb > 0 && CIhighDb > 0) {
-					signif = true;
-				}
-				points = Double.parseDouble(parts[0]);
-			} catch (Exception e) {
-				description = parts[2];
-				String MD = parts[3];
-				String[] CI = MD.split(" to ");
-				CIlow = CI[0];
-				CIhigh = CI[1];
-				CIlowDb = Double.parseDouble(CIlow);
-				CIhighDb = Double.parseDouble(CIhigh);
-				if (CIlowDb < 0 && CIhighDb < 0 || CIlowDb > 0 && CIhighDb > 0) {
-					signif = true;
-				}
-				points = Double.parseDouble(parts[2]);
-			}
-			
-			
-			
-			return x1r1c2.toString();
-		} catch (Exception e) {
-			return x1r1c2.toString();
-		}
-	}
+	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//This method wraps some outcomes with wiki mark-up that is linked with an explanatory wiki page
 public String wikiLinkOutcome(String outcome) {
-		
+		outcome = outcome.replaceAll("([A-Z])(Follow)", "$1 $2");//replacing missing spaces
+		outcome = outcome.replaceAll("(term)([A-Z])", "$1 $2");//replacing missing spaces
 		try {
 			String x = "";
 			x = "Mental state"; 						if (x.equals(outcome)) {outcome = outcome.replace("Mental state", "[[Mental health|Mental state]]");}
@@ -407,7 +382,8 @@ public String createTable(String tblName, String Author0, String Creator0, Strin
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 public String writeX1b(String x1b) {
-	
+	x1b = x1b.replaceAll("([A-Z])(Follow)", "$1 $2");//replacing missing spaces
+	x1b = x1b.replaceAll("(term)([A-Z])", "$1 $2");//replacing missing spaces
 	try {
 		
 		if (x1b.contains("BPRS")) {

@@ -2,11 +2,22 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CalcWords { 
+	Pattern p;
+	Matcher m;
+	
+	public CalcWords() {//for assigning the MD matching pattern
+		p = Pattern.compile("([0-9]\\slower)|([0-9]\\shigher)");
+		 
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//this method takes in: already finished Strings language, intervention, control and evX. Furthermore it takes the Strings of the "Per 1000" numbers 
@@ -44,6 +55,7 @@ public class CalcWords {
 			double points;
 			
 			if (x1r1c3.contains("RR")) {
+				
 					//gets data into proper format -> can't calculate with a String
 					Tbl1Per = Tbl1Per.replace("1,000", "1000");
 					Tbl1Per = Tbl1Per.split(" per 1000")[0];
@@ -261,70 +273,89 @@ public class CalcWords {
 					resultingVal = out1.toString();
 				 
 			} else {
-				//calcMD
-				//extracts data which is needed
-				x1r1c3 = x1r1c3.replace("MD ", "");
-				x1r1c3 = x1r1c3.replace("higher", "");
-				x1r1c3 = x1r1c3.replace("lower", "");
-				x1r1c3 = x1r1c3.replace(")", ":");
-				x1r1c3 = x1r1c3.replace("(", ":") ; 				// Creates ":" regex for splitting
-				String[] parts = x1r1c3.split(":");
-				//splits lower and higher end of CI so that these can be analysed for statistical significance. 
-				String MD = parts[1];
-				String[] CI = MD.split(" to ");
-				String CIlow = CI[0];
-				String CIhigh = CI[1];
-				CIlowDb = Double.parseDouble(CIlow);
-				CIhighDb = Double.parseDouble(CIhigh);
-				if (CIlowDb < 0 && CIhighDb < 0 || CIlowDb > 0 && CIhighDb > 0) {
-					signif = true;
+				m = p.matcher(Tbl2Per);
+				if (m.find()) {
+					///////////////////////////////////#################################################################
+					
+					
+					signif = false;
+					
+						try {
+							
+								//takes away unnecessary information 
+							Tbl2Per = Tbl2Per.replace(" lower", "-");
+							
+							Tbl2Per = Tbl2Per.replaceAll("[^0-9\\s-?!\\.]", " ");
+							
+							Tbl2Per = Tbl2Per.replaceAll("\\s{2,}", " ").trim();
+							
+							String[] mDnumbers = Tbl2Per.split("\\s");
+							ArrayList <String> filteredResults = new ArrayList<String>();
+							for(String s: mDnumbers) {//filtering the contents of mDnumbers and taking only the ones that start with a digit
+								if(Character.isDigit(s.charAt(0)))
+									filteredResults.add(s);
+								
+							}
+								//String is fed into method that returns doubles to work with. in case the original string said x lower it becomes -x.
+							String MD = filteredResults.get(0);
+							MDClass mdObject = new MDClass();
+							
+							double mdDouble = mdObject.parseDoubles(MD);
+							String CI1 = filteredResults.get(1);
+							
+							double ciLowerDouble = mdObject.parseDoubles(CI1);
+							String CI2 = filteredResults.get(2);
+							
+								//statistical significance is tested
+							double ciHigherDouble = mdObject.parseDoubles(CI2);
+							
+							if (ciLowerDouble < 0 && ciHigherDouble < 0 || ciLowerDouble > 0 && ciHigherDouble > 0) {
+								signif = true;
+							}
+								//Takes minus away so that the MD value can be used in the resulting string. 
+							MD = MD.replace("-", "");
+							
+								
+								//The findings in words string is filled with proper content
+							if (mdDouble > 0 && signif == true) {
+								resultingVal = "On average, people receiving " + intervention + " scored " + MD
+										+ " higher than people treated with " + control
+										+ ". There was a clear difference between the groups, but at present the meaning of this in day-to-day care is unclear. This "+ evX;
+							} else if (mdDouble < 0 && signif == true) {
+								resultingVal = "On average, people receiving " + intervention + " scored " + MD
+										+ " lower than people treated with " + control
+										+ ". There was a clear difference between the groups. At present the meaning of this in day-to-day care is unclear. This "+ evX;
+							} else if (mdDouble < 0 && signif == false) {
+								resultingVal = "On average, people receiving " + intervention + " scored " + MD
+										+ " lower than people treated with " + control
+										+ ". There was no clear difference between the groups. The meaning of this in day-to-day care is unclear. This "+ evX;
+							} else if (mdDouble > 0 && signif == false) {
+								resultingVal =  "On average, people receiving " + intervention + " scored " + MD
+										+ " higher than people treated with " + control
+										+ ". There was no clear difference between the groups, and at present the meaning of this in day-to-day care is unclear. This "+ evX;
+							} else if (mdDouble == 0 && signif == false) {
+								resultingVal = "On average, people receiving " + intervention + " scored the same as people treated with " + control
+										+ ". There was no clear difference between the groups. The meaning of this in day-to-day care is unclear.";
+							} else if (mdDouble == 0 && signif == true) {
+								resultingVal = "On average, people receiving " + intervention + " scored the same as people treated with " + control
+										+ ". The meaning of this in day-to-day care is unclear.";
+							} 
+							
+							resultingVal = resultingVal + "-split-" + "MD " + mdDouble + " ("+ciLowerDouble+" to "+ciHigherDouble+")";
+						
+						} catch (Exception e) {
+							System.out.println("MD exception caught!");
+							//d1r1c3 = d1r1c3.replace("In day-to-day care the meaning of this is not clear.", "");
+							resultingVal= Tbl2Per;
+						}
+					
+				
+					///////////////////////////////////////////////#######################################################
+					
 				}
-				points = Double.parseDouble(parts[0]);
-				
-				StringWriter out1 = new StringWriter();			//creates new string- and printWriters to flush output into the return-statement and therefore into the String used in main
-				PrintWriter writer1 = new PrintWriter(out1);
 				
 				
-				//english version
-				if (language =="eng" && signif == true) {
-					
-					writer1.print("For people given " + intervention + " the outcome was " + points + " compared to those given " 
-					+ control + ". There was a clear difference between the two groups " + evX);
-					
-				} else if (language =="eng" && signif == false) {
-					
-					writer1.print("For people given " + intervention + " the outcome was " + points + " compared to those given " 
-					+ control + ". There was no clear difference between the two groups " + evX);
-					
-				//} else if (tma > 1 && language =="eng" && signif == true) {
-					
-					//writer1.print(r1String + "% of people given " + control + " experienced the measured outcome, compared with " + r2String + "%  of those given " 
-					//+ intervention + ". The relative risk of experiencing the measured outcome was found to be " + tmBString + "% less in intervention group. There was a clear difference between the two groups " + evX);
 				
-				//} else if (tma > 1 && language =="eng" && signif == false) {
-					
-					//writer1.print(r1String + "% of people given " + control + " experienced the measured outcome, compared with " + r2String + "%  of those given " 
-					//+ intervention + ". The relative risk of experiencing the measured outcome was found to be " + tmBString + "% less in intervention group. There was no clear difference between the two groups " + evX);
-				
-				//} else if (tma == 1 && language =="eng" && signif == true) {
-					
-					//writer1.print(r1String + "% of people given " + control + " experienced the measured outcome, compared with " + r2String + "%  of those given " 
-					//+ intervention + ". The relative risk of experiencing the measured outcome was found to be the same in both groups. There was a clear difference between the two groups " + evX);
-				
-				//} else if (tma == 1 && language =="eng" && signif == false) {
-					
-					//writer1.print(r1String + "% of people given " + control + " experienced the measured outcome, compared with " + r2String + "%  of those given " 
-					//+ intervention + ". The relative risk of experiencing the measured outcome was found to be the same in both groups. " + evX);
-				
-				//} else if (tma < 1 && language =="ger") {
-				//writer1.print(tmAString + "% der Patienten erlebten das gemessene Outcome. " + evX); 
-				//} else if (tma > 1 && language =="ger") {
-			//	writer1.print("Das relative Risiko das gemessene Outcome zu erleben war  " + tmBString + "% geringer in der Interventionsgruppe. " + evX);
-				}
-				 
-				writer1.flush(); 
-				    //writes the writer.-lines into the string used in Main function 
-				resultingVal = out1.toString();
 			}
 			
 			return resultingVal.toString();
@@ -443,8 +474,8 @@ public class CalcWords {
 	//This method is used to decide which Strings are used for the writeRR() depending on table Layout. If the calculations fail 
 	// because of any reason this method deals with it in the catch brackets. Thats the case if an MD is encountered. In this case it tries to fill the findings in words when no data are encountered. This method is called in ContentClass 
 	public String writeFindings(boolean x6, boolean x4, boolean x2, boolean x3,  
-		   String x1r1c3, String x1r1c1, String x1r1c2, 
-		   String x1r1c1a, String x1r3c1b, String x1r5c1c, String x1r1c2a, 
+		   String x1r1c3, String x1r1c1, String rr_md, 
+		   String x1r1c1a, String x1r3c1b, String x1r5c1c, String rr_md_extra, 
 		   String x1r2c1, String x1r2c2, String x1r4c1, String x1r4c2, String x1r6c1, String x1r6c2,
 		   String x1r1c6, 
 		   String language, String evX, String intervention, String control, boolean xHigh, boolean xModerate, boolean xLow, boolean xVeryLow) {
@@ -454,50 +485,52 @@ public class CalcWords {
 		try {
 			if (x6 == true ){
 				if (x1r3c1b.contains("Medium") || x1r3c1b.contains("medium") || x1r3c1b.contains("Moderate") || x1r3c1b.contains("moderate")) {
-					x1words = calc.writeRR(x1r1c2a, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+					x1words = calc.writeRR(rr_md_extra, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 				} else if (x1r1c1a.contains("Medium") || x1r1c1a.contains("medium") || x1r1c1a.contains("Moderate") || x1r1c1a.contains("moderate")) {
-					x1words = calc.writeRR(x1r1c2a, language, evX, x1r2c1, x1r2c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+					x1words = calc.writeRR(rr_md_extra, language, evX, x1r2c1, x1r2c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 				} else if (x1r5c1c.contains("Medium") || x1r5c1c.contains("medium") || x1r5c1c.contains("Moderate") || x1r5c1c.contains("moderate")) {
-					x1words = calc.writeRR(x1r1c2a, language, evX, x1r6c1, x1r6c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+					x1words = calc.writeRR(rr_md_extra, language, evX, x1r6c1, x1r6c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 				} else {
-					x1words = calc.writeRR(x1r1c2a, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+					x1words = calc.writeRR(rr_md_extra, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 				}
 					
 			} else if (x4 == true) {
 				if (x1r3c1b.contains("Medium") || x1r3c1b.contains("medium") || x1r3c1b.contains("Moderate") || x1r3c1b.contains("moderate")) {
-					x1words = calc.writeRR(x1r1c2a, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+					x1words = calc.writeRR(rr_md_extra, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 				} else if (x1r1c1a.contains("Medium") || x1r1c1a.contains("medium") || x1r1c1a.contains("Moderate") || x1r1c1a.contains("moderate")) {
-					x1words = calc.writeRR(x1r1c2a, language, evX, x1r2c1, x1r2c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+					x1words = calc.writeRR(rr_md_extra, language, evX, x1r2c1, x1r2c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 				} else {
-					x1words = calc.writeRR(x1r1c2a, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+					x1words = calc.writeRR(rr_md_extra, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 				}
 				
 			} else if (x2 == true) {
-				x1words = calc.writeRR(x1r1c2a, language, evX, x1r2c1, x1r2c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+				x1words = calc.writeRR(rr_md_extra, language, evX, x1r2c1, x1r2c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 			} else if (x3 == true && x1r1c3.contains("RR")) {
-				x1words = calc.writeRR(x1r1c2a, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+				x1words = calc.writeRR(rr_md_extra, language, evX, x1r4c1, x1r4c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
 			} else {
-				x1words = calc.writeRR(x1r1c3, language, evX, x1r1c1, x1r1c2, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+				System.out.println("given for: " + rr_md);
+				x1words = calc.writeRR(x1r1c3, language, evX, x1r1c1, rr_md, intervention, control, xHigh, xModerate, xLow, xVeryLow);
+				
 			}
 			
 			return x1words.toString();
 		} catch (Exception e) {
 			try {
 				
-				if (x1r1c1.contains("omment") || (x1r1c2.contains("omment"))) {
+				if (x1r1c1.contains("omment") || (rr_md.contains("omment"))) {
 					//x1words ="Comment: " + x1r1c6;
 					//x1words = "For this outcome there is no evidence based data suggesting that " + intervention + " is better than " + control + ".";
 					x1words = "the outcome was not measured/reported in the included studies.";
 					x1words = x1words.substring(0, 1).toUpperCase() + x1words.substring(1);
 					
-				} else if (x1r1c1.contains("omment") || (x1r1c2.contains("omment"))) {
+				} else if (x1r1c1.contains("omment") || (rr_md.contains("omment"))) {
 					//x1words ="Comment: " + x1r1c6 + " (Intervention: " + x1r1c2 + "; Control: " + x1r1c1 + ")";
 				}
 				else if (x1r1c1==null || x1r1c1.isEmpty()) {
-					x1words = x1r1c2;
+					x1words = rr_md;
 					
 					
-				} else if (x1r1c2==null || x1r1c2.isEmpty()) {
+				} else if (rr_md==null || rr_md.isEmpty()) {
 					x1words =  x1r1c1;
 				} else {
 					intervention = intervention.substring(0, 1).toUpperCase() + intervention.substring(1);
@@ -510,7 +543,7 @@ public class CalcWords {
 					} else {
 						x1r1c1 = x1r1c1.trim();
 						//x1words = "Intervention: " + x1r1c2 + ". Control: " + x1r1c1 + ".";
-						x1words = intervention + ": " + x1r1c2 + ". " + control + ": " + x1r1c1 + ". In day-to-day care the meaning of this is not clear."; //+ ". Comment: " + x1r1c6;
+						x1words = intervention + ": " + rr_md + ". " + control + ": " + x1r1c1 + ". In day-to-day care the meaning of this is not clear."; //+ ". Comment: " + x1r1c6;
 						
 					}
 					

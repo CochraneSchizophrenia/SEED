@@ -99,7 +99,6 @@ public class MDClass {
 	//////////for scales
 	
 	public String scaleMD(String d1r1c2a, String d1words) {
-	
 	MDClass mdRegex = new MDClass();
 	try {
 		try {
@@ -108,7 +107,7 @@ public class MDClass {
 			mdScore = mdRegex.regexChecker("(\\d+.\\d+\\s(higher|lower)\\()", d1words);
 			mdScore = mdScore.replace("\n", "");
 			mdScore = mdScore.trim();
-			System.out.println("md" + mdScore);
+			//System.out.println("md" + mdScore);
 			d1r1c2a = mdScore + d1r1c2a;
 			d1r1c2a = d1r1c2a.trim();
 			d1r1c2a = d1r1c2a.replace("\n", "");
@@ -203,7 +202,16 @@ return d1r1c2a.toString();
 		
 		MDClass mdRegex = new MDClass();
 		
+		
+		
+		
+		//String[] allCandidates = {a1r1c2a, a1r1c3,b1r1c2a, b1r1c3,c1r1c2a, c1r1c3, d1r1c2a, d1r1c3, e1r1c2a, e1r1c3, f1r1c2a, f1r1c3, g1r1c2a, g1r1c3};
+		
+		
 		try {
+			
+			
+			
 			if (a1words.contains("SWN") || a1words.contains("PANSS") || a1words.contains("QLS") || a1words.contains("BPRS") || a1words.contains("PercQol") || a1words.contains("SANS") || a1words.contains("LUNSERS") || a1words.contains("HAMD") || a1words.contains("scale") || a1words.contains("Scale") || a1words.contains("score") || a1words.contains("GAF")) {
 				a1r1c2a = mdRegex.scaleMD(a1r1c2a, a1words);
 				a1r1c3 = mdRegex.scaleMD(a1r1c3, a1words);

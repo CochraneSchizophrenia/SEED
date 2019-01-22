@@ -2029,6 +2029,8 @@ f1r1c5 = lang.changeEv(f1r1c5);
 g1r1c4a = lang.changeEv(g1r1c4a);
 g1r1c5 = lang.changeEv(g1r1c5);
 
+
+
 //the following boolean will be true if they match the evidence level hinted at in their names. 
 boolean[] aBoolean = lang.getBoolean(a1r1c4a, a1r1c5);
 aVeryLow = aBoolean[0];
@@ -2074,7 +2076,7 @@ gHigh = gBoolean[3];
 gNA = gBoolean[4];
 
 //Creates String for evidence level in selected language, takes c5 for normal lines and c4a for extended lines	
-
+//evA comes out as eg. "is based on data of low certainty"
 
 evA = lang.writeEv(one6, one4, one2, five3, a1r1c5, a1r1c4a, language);
 evB = lang.writeEv(two6, two4, two2, five3, b1r1c5, b1r1c4a, language);
@@ -2083,6 +2085,7 @@ evD = lang.writeEv(four6, four4, four2, five3, d1r1c5, d1r1c4a, language);
 evE = lang.writeEv(five6, five4, five2, five3, e1r1c5, e1r1c4a, language);
 evF = lang.writeEv(six6, six4, six2, five3, f1r1c5, f1r1c4a, language);
 evG = lang.writeEv(seven6, seven4, seven2, five3, g1r1c5, g1r1c4a, language);
+
 
 //Fuses all parts of generated text and adds numbers for normal one-liners and if there are more lines it chooses the right line and info to use (
 // medium/moderate risk groups were chosen in general. See CalcWords class for more info), boolean xHigh, boolean xModerate, boolean xLow, boolean xVeryLow
@@ -2095,6 +2098,29 @@ f1words = calc.writeFindings(six6, six4, six2, five3, f1r1c3, f1r1c1, f1r1c2, f1
 g1words = calc.writeFindings(seven6, seven4, seven2, five3, g1r1c3, g1r1c1, g1r1c2, g1r1c1a, g1r3c1b, g1r5c1c, g1r1c2a, g1r2c1, g1r2c2, g1r4c1, g1r4c2, g1r6c1, g1r6c2, g1r1c6, language, evG, intervention, control, gHigh, gModerate, gLow, gVeryLow);
 
 
+
+//////////updating the findings in numbers if it was a MD outcome
+if(a1words.split("-split-").length>1)
+	a1r1c3 = a1words.split("-split-")[1];
+	a1words = a1words.split("-split-")[0];
+if(b1words.split("-split-").length>1)
+	b1r1c3 = b1words.split("-split-")[1];
+	b1words = b1words.split("-split-")[0];
+if(c1words.split("-split-").length>1)
+	c1r1c3 = c1words.split("-split-")[1];
+	c1words = c1words.split("-split-")[0];
+if(d1words.split("-split-").length>1)
+	d1r1c3 = d1words.split("-split-")[1];
+	d1words = d1words.split("-split-")[0];
+if(e1words.split("-split-").length>1)
+	e1r1c3 = e1words.split("-split-")[1];
+	e1words = e1words.split("-split-")[0];
+if(f1words.split("-split-").length>1)
+	f1r1c3 = f1words.split("-split-")[1];
+	f1words = f1words.split("-split-")[0];
+if(g1words.split("-split-").length>1)
+	g1r1c3 = g1words.split("-split-")[1];
+	g1words = g1words.split("-split-")[0];
 
 //if the review states that the RR is not estimable an empty field should appear in the wikitable
 a1r1c2a = a1r1c2a.replace("Not estimable", "");
@@ -2167,6 +2193,7 @@ d1words = reformat.wikiChangeAutoGeneration(d1a, d1words);
 e1words = reformat.wikiChangeAutoGeneration(e1a, e1words);
 f1words = reformat.wikiChangeAutoGeneration(f1a, f1words);
 g1words = reformat.wikiChangeAutoGeneration(g1a, g1words);
+System.out.println(b1words);
 
 //to wrap an explanatory wiki link around the String if it fits the topic
 a1 = reformat.wikiLinkOutcome(a1); 
@@ -2211,36 +2238,30 @@ if (f1a.equals(g1a)) {
 
 //Special case acupuncture review
 MDClass mdRegex = new MDClass();
-if (d1words.contains("hospital (days)")) {
-	d1r1c2a = mdRegex.scaleMDacup(d1r1c2a, d1words);
-	d1r1c3 = mdRegex.scaleMDacup(d1r1c3, d1words);
-	d1words = "On average, people receiving acupuncture added to standard dose antipsychotics spent 16 days less in hospital than people treated with standard dose antipsychotics. There was no clear difference between the groups. The meaning of this in day-to-day care is unclear.";
-	}
-//dealing with MD: formulates the findings in words and fills the findings in numbers Strings
 
 
-String[] mdArray = mdRegex.makeMD(a1words, a1r1c2a, a1r1c3, aVeryLow, b1words, b1r1c2a, b1r1c3, bVeryLow, c1words, c1r1c2a, c1r1c3, cVeryLow, d1words, d1r1c2a, d1r1c3, dVeryLow, e1words, e1r1c2a, e1r1c3, eVeryLow, f1words, f1r1c2a, f1r1c3, fVeryLow, g1words, g1r1c2a, g1r1c3, gVeryLow, intervention);
-a1words = mdArray[0];
-b1words = mdArray[1];
-c1words = mdArray[2];
-d1words = mdArray[3];
-e1words = mdArray[4];
-f1words = mdArray[5];
-g1words = mdArray[6];
-a1r1c2a = mdArray[7];
-b1r1c2a = mdArray[8];
-c1r1c2a = mdArray[9];
-d1r1c2a = mdArray[10];
-e1r1c2a = mdArray[11];
-f1r1c2a = mdArray[12];
-g1r1c2a = mdArray[13];
-a1r1c3 = mdArray[14];
-b1r1c3 = mdArray[15];
-c1r1c3 = mdArray[16];
-d1r1c3 = mdArray[17];
-e1r1c3 = mdArray[18];
-f1r1c3 = mdArray[19];
-g1r1c3 = mdArray[20];
+//String[] mdArray = mdRegex.makeMD(a1words, a1r1c2a, a1r1c3, aVeryLow, b1words, b1r1c2a, b1r1c3, bVeryLow, c1words, c1r1c2a, c1r1c3, cVeryLow, d1words, d1r1c2a, d1r1c3, dVeryLow, e1words, e1r1c2a, e1r1c3, eVeryLow, f1words, f1r1c2a, f1r1c3, fVeryLow, g1words, g1r1c2a, g1r1c3, gVeryLow, intervention);
+//a1words = mdArray[0];
+//b1words = mdArray[1];
+//c1words = mdArray[2];
+//d1words = mdArray[3];
+//e1words = mdArray[4];
+//f1words = mdArray[5];
+//g1words = mdArray[6];
+//a1r1c2a = mdArray[7];
+//b1r1c2a = mdArray[8];
+//c1r1c2a = mdArray[9];
+//d1r1c2a = mdArray[10];
+//e1r1c2a = mdArray[11];
+//f1r1c2a = mdArray[12];
+//g1r1c2a = mdArray[13];
+//a1r1c3 = mdArray[14];
+//b1r1c3 = mdArray[15];
+//c1r1c3 = mdArray[16];
+//d1r1c3 = mdArray[17];
+//e1r1c3 = mdArray[18];
+//f1r1c3 = mdArray[19];
+//g1r1c3 = mdArray[20];
 
 
 
@@ -2304,13 +2325,6 @@ e1b = reformat.writeX1b(e1b);
 f1b = reformat.writeX1b(f1b);
 g1b = reformat.writeX1b(g1b);
 
-a1words = mdRegex.newMDwords(a1words, a1r1c3, intervention, control);
-b1words = mdRegex.newMDwords(b1words, b1r1c3, intervention, control);
-c1words = mdRegex.newMDwords(c1words, c1r1c3, intervention, control);
-d1words = mdRegex.newMDwords(d1words, d1r1c3, intervention, control);
-e1words = mdRegex.newMDwords(e1words, e1r1c3, intervention, control);
-f1words = mdRegex.newMDwords(f1words, f1r1c3, intervention, control);
-g1words = mdRegex.newMDwords(g1words, g1r1c3, intervention, control);
 
 conclusions = reformat.conclLink(conclusions);
 
